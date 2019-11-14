@@ -1,0 +1,52 @@
+# Turn on CTest
+enable_testing()
+
+find_library(wiringPi_LIB wiringPi)
+
+set (socket
+    src/socket)
+
+add_library(zumo_lib SHARED 
+    ${socket} )
+
+add_subdirectory(lib/catch EXCLUDE_FROM_ALL)
+
+# Adds a program with the given name and source files, and sets the
+# language to C++ 14
+function (add_program name)
+    add_executable(${name} ${ARGN})
+    set_property(TARGET ${name} PROPERTY CXX_STANDARD 14)
+    set_property(TARGET ${name} PROPERTY CXX_STANDARD_REQUIRED On)
+    set_property(TARGET ${name} PROPERTY COMPILE_FLAGS -Wno-psabi)
+    set_target_properties(${name}
+        PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "bin/"
+    )
+    target_link_libraries(${name} zumo_lib)
+endfunction (add_program)
+
+# Adds a test program with the given name and source files
+function (add_test_program name)
+    add_program(${name} ${ARGN})
+    set_target_properties(${name}
+        PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY ".tests/"
+    )
+    target_link_libraries(${name} catch)
+    add_test(Test_${name} ${name})
+    add_custom_command(TARGET ${name}
+                       POST_BUILD
+                       COMMAND ${name})
+endfunction (add_test_program)
+
+# Like find_file, but does not cache the result.
+function (find_file_nc dest_var filename)
+    set(${dest_var} "" PARENT_SCOPE)
+    foreach(dir ${ARGN})
+        if(EXISTS "${dir}/${filename}")
+            set(${dest_var} "${dir}/${filename}" PARENT_SCOPE)
+            return()
+        endif()
+    endforeach()
+endfunction(find_file_nc)
+
