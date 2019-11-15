@@ -1,6 +1,6 @@
-#include "uart.h"
-#include <wiringPiI2C.h>
-#include <wiringPi.h>
+//#include "uart.h"
+//#include <wiringPiI2C.h>
+//#include <wiringPi.h>
 #include <iostream>
 #include <stdio.h>
 #include <string.h>
@@ -23,7 +23,7 @@ bool exists (const std::string& name) {
   struct stat buffer;   
   return (stat (name.c_str(), &buffer) == 0); 
 }
-
+/*
 struct comm{
   private:
   unsigned char _buffer[255];
@@ -51,11 +51,11 @@ struct comm{
     _index=0;
     len = 0;
   }
-};
+};*/
 
 int main(int argc, char *argv[])
 {
-  comm serial;
+  //comm serial;
   signal (SIGINT, handle_SIGINT);
 
   printf ("Connecting to Pixy2...");
@@ -74,8 +74,8 @@ int main(int argc, char *argv[])
     if (pixy.ccc.numBlocks){
       int angle = (pixy.ccc.blocks[0].m_x * 60 / 320);
       printf ("Angle: %d\n", angle);
-      serial.append(angle);
-      serial.write();
+      //serial.append(angle);
+      //serial.write();
     }
   }
 }
