@@ -12,17 +12,30 @@
 #include <string>
 #include <thread>
 #include <mutex>
-
+#include <vector>
+#include <queue>
 
 struct Joystick{
-    Joystick(std::string);
+    struct Button{
+        enum button_state{
+            none,
+            pressed,
+            released
+        };
+        button_state read_event ();
+        void record_event(button_state);
+        button_state state;
+        std::queue<button_state> _events;
+    };
+    explicit Joystick(std::string &);
+    std::vector<int32_t> axes;
+    std::vector<Button> buttons;
 
-    struct js_event event;
-    int js;
+private:
     std::thread _update_thread;
-
     static void _update_(Joystick &);
+    bool _active = true;
+    int _js;
 };
-
 
 #endif //PREY_PREY_H
