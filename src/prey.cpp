@@ -28,6 +28,6 @@ int main(int argc, char *argv[]) {
             cout << j.buttons[i].state << "\t";
         }*/
 
-        usleep(1000000);
+        usleep(100000);
     }
 }
