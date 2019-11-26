@@ -5,29 +5,27 @@ using namespace std;
 using namespace gcomm;
 
 struct data {
-    int32_t axis[8];
+    int32_t axis[2];
 };
 
 
 int main(int argc, char *argv[]) {
-    GUartStream serial(GUartStream::baudrate::b57600);
-    GStreamConnector conn(serial);
+    GUartBuffers serial(GUart::Baudrate::b57600);
+    GBufferConnector conn(serial.rx_buffer, serial.tx_buffer);
     GComm<data,data> comm(conn);
     data new_data;
     string device("/dev/input/js0");
     Joystick j(device);
     bool h = true;
     while (h){
-        for (int i = 0;i<j.axes.size();i++) {
-            cout << j.axes[i] << "\t";
-            new_data.axis[i] = j.axes[i];
-        }
-        cout << endl;
+        cout << j.axes[1] << "\t" << j.axes[3] << endl;
+        new_data.axis[0] = j.axes[1];
+        new_data.axis[1] = j.axes[2];
         comm.write_object(new_data);
 /*        for (int i = 0;i<j.buttons.size();i++) {
             cout << j.buttons[i].state << "\t";
         }*/
 
-        usleep(100000);
+        usleep(50000);
     }
 }
